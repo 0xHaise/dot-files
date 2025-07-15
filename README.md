@@ -138,7 +138,7 @@ alias fastfetch="fastfetch --kitty-direct ~/Downloads/0xinterrupthandler.png
 
 # Result
 
-![Alt text](resut.png)
+![Alt text](result.png)
 
 
 
