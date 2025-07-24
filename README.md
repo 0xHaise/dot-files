@@ -25,6 +25,20 @@ git checkout stable
 make CMAKE_BUILD_TYPE=Release
 sudo make install
 ```
+### Clona el repositorio de Nerd Fonts
+```
+git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git
+cd nerd-fonts
+```
+### Instala fuentes para iconos de nvim, por ejemplo Hack
+```
+./install.sh Hack
+```
+dentro de kitty.conf:
+```
+font_family Hack Nerd Font
+```
+
 
 ---
 
