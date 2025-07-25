@@ -1,9 +1,16 @@
-" INFORMACION:
+
 " PACKAGE MANAGER: VIM-PLUG
 " CANTIDAD DE PLUGINS :
 " TECLA LEADER : "\"
 let mapleader = "\\"
 
+" Mapeo en modo normal para buscar por palabras con Telescope
+nnoremap <leader>w :Telescope live_grep<CR>
+
+
+nnoremap <silent> <leader>h :call CocActionAsync('doHover')<CR>
+" Atajo para ejecutar Prettier
+nmap <leader>p :Prettier<CR>
 
 " vim: foldmethod=marker
 
@@ -63,9 +70,7 @@ set nobackup
 set noswapfile
 " Automatically reload files when they change
 set autoread
-" Enable spell checking
-set spell
-set spelllang=en
+
 " Highlight the current line
 set cursorline
 " Show white space characters and tab characters
@@ -110,83 +115,22 @@ vnoremap <S-j> 5j
 nnoremap <S-k> 5k
 vnoremap <S-k> 5k
 
-" Map r to redo
-nmap r :redo<CR>
+nmap <leader>wq :wq!<cr>
+nmap <leader>w :w!<cr>
+nmap <leader>q :q!<cr>
+map <leader>tn :tabnew<cr>
+map <leader>to :tabonly<cr>
+map <leader>tc :tabclose<cr>
+map <leader>tm :tabmove
+map <leader>t<leader> :tabnext
 
-" Enable folding
-set foldenable
-" Configure fold method
-" - indent (bigger the indent is - larger the fold level; works quite well for many programming
-"   languages)
-" - syntax (folding is defined in the syntax files)
-" - marker (looks for markers in the text; everything within comments foldable block {{{ and }}} is
-"   a fold)
-" - expr (fold level is calculated for each line by providing a special function)
-set foldmethod=marker
-" Set the fold level to start with all folds open
+
+set foldmethod=indent
+"Para evitar que todos los bloques estén colapsados al abrir un archivo
 set foldlevelstart=99
-" Set the fold nesting level (default is 20)
-set foldnestmax=10
-" Automatically close folds when the cursor leaves them
-set foldclose=
-" Open folds upon all motion events
-set foldopen=
-" Do not automatically adjust width of vertical splits
-set noequalalways
-" Our default format for compiler errors is gcc
-compiler gcc
-" }}}
-" ============================= Vim script settings ============================= 
-" Vim script settings {{{
-augroup VimScriptExtras
-	au!
-	au FileType vim vnoremap <buffer> <C-r> "*y \| <Esc>:@*<CR>
-augroup END
-" }}}
+set foldenable
 
- 
-" Settings: quickfix {{{
-nnoremap <C-q> :copen<CR>
-augroup QuickFixGroup
-	au!
-	au FileType qf nnoremap <buffer> n :cnext<CR>
-	au FileType qf nnoremap <buffer> p :cprev<CR>
-	au FileType qf nnoremap <buffer> <C-i> :cclose<CR>
-augroup END
-" }}}
 
-au CursorMovedI *.md call ModifyTextWidth() " Use only within *.md files
-
-function! ModifyTextWidth()
-    if getline(".")=~'^.*\[.*\](.*)$' " If the line ends with Markdown link - set big value for textwidth
-        setlocal textwidth=500
-    else
-        setlocal textwidth=80 " Otherwise use normal textwidth
-    endif
-endfunction
-
-" Settings: wildmenu {{{
-" This remaps the keys so up and down works in completion menus
-"cnoremap <Up> <C-p>
-"cnoremap <Down> <C-n>
-" }}}
-
-" Settings: highlight unwanted spaces {{{
-highlight ExtraWhitespace ctermbg=red guibg=red
-match ExtraWhitespace /\s\+$/
-augroup TrailingWhitespace
-	autocmd!
-	autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
-	autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
-	autocmd InsertLeave * match ExtraWhitespace /\s\+$/
-	autocmd BufWinLeave * call clearmatches()
-	autocmd FileType floaterm highlight clear ExtraWhitespace
-augroup end
-let c_space_errors = 1
-" }}}
-
-" autodetect .blade.php as blade
-autocmd BufRead,BufNewFile *.blade.php set filetype=blade
 
 
 " ============================= Load vim plugins ============================= 
@@ -211,54 +155,41 @@ Plug 'jeetsukumaran/vim-buffergator'                " Navegación entre buffers
 " ------------------------- Git e Integración -------------------------
 Plug 'lewis6991/gitsigns.nvim'     " Integración Git en buffers
 Plug 'tpope/vim-fugitive'          " Git en Vim
-" Plug 'airblade/vim-gitgutter'    " (opcional) Alternativa a gitsigns
+
 
 " ----------------------- Herramientas de desarrollo -----------------------
 Plug 'neoclide/coc.nvim', {'branch': 'release', 'do': 'yarn install --frozen-lockfile'} " Autocompletado LSP
-Plug 'neovim/nvim-lspconfig', {'tag':'v2.3.0'} " Configuración de LSP
+ 
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'} " Análisis de sintaxis moderno
 Plug 'p00f/nvim-ts-rainbow'           " Colores para paréntesis
 Plug 'dense-analysis/ale'             " Linter y fixer
 Plug 'tpope/vim-commentary'           " Comentarios rápidos con gc
 Plug 'tpope/vim-dispatch'             " Ejecución asíncrona
-Plug 'majutsushi/tagbar'              " Visualización de símbolos/tags
-Plug 'vim-scripts/DoxygenToolkit.vim' " Soporte Doxygen
-Plug 'vim-scripts/c.vim'              " Soporte para C
-Plug 'jwalton512/vim-blade'
 Plug 'honza/vim-snippets'
-
+" Plugin oficial de Prettier: npm install -g prettier
+Plug 'prettier/vim-prettier', {
+      \ 'do': 'npm install --frozen-lockfile --production',
+      \ 'for': ['javascript', 'typescript', 'css', 'json', 'markdown'] }
+Plug 'norcalli/nvim-colorizer.lua'
+Plug 'prisma/vim-prisma'
 " ------------------------- Snippets y Autocompletado -------------------------
 Plug 'hrsh7th/nvim-cmp'               " Motor de completado moderno
-Plug 'hrsh7th/cmp-nvim-lsp'
-Plug 'hrsh7th/cmp-buffer'
-Plug 'hrsh7th/cmp-path'
-Plug 'hrsh7th/cmp-cmdline'
-Plug 'hrsh7th/vim-vsnip'
-Plug 'hrsh7th/vim-vsnip-integ'
-Plug 'L3MON4D3/LuaSnip'               " Motor moderno de snippets
-Plug 'rafamadriz/friendly-snippets'   " Repositorio de snippets
-Plug 'yaegassy/coc-blade', {'do': 'yarn install --frozen-lockfile'} " :CocInstall coc-blade
+
+
+
 
 " -------------------------- Lenguajes específicos --------------------------
 Plug 'pangloss/vim-javascript'
-Plug 'leafgarland/typescript-vim'
-Plug 'MaxMEllon/vim-jsx-pretty'
-Plug 'jparise/vim-graphql'
+
 Plug 'ledger/vim-ledger'              " Contabilidad con ledger
-Plug 'habamax/vim-asciidoctor'        " AsciiDoc
-Plug 'lervag/vimtex'                  " Soporte completo para LaTeX
-Plug 'stsewd/sphinx.nvim'             " Documentación con Sphinx
 
 " ------------------------- Productividad -------------------------
 Plug 'junegunn/goyo.vim'              " Modo zen/escritura enfocada
-Plug 'dhruvasagar/vim-table-mode'     " Tablas con formato
-Plug 'mbbill/undotree'                " Visualizador de árbol de deshacer
-Plug 'itchyny/calendar.vim'           " Calendario en Vim
-Plug 'tpope/vim-speeddating'          " Edición rápida de fechas
-Plug 'inkarkat/vim-AdvancedSorters'   " Ordenamientos avanzados
+ 
+ 
 Plug 'inkarkat/vim-ingo-library'      " Librería necesaria para otros plugins
 Plug 'voldikss/vim-floaterm'          " Terminal flotante
-Plug 'kkvh/vim-docker-tools'          " Herramientas para Docker
+ 
 Plug 'folke/which-key.nvim'           " Muestra accesos rápidos
 Plug 'nvimdev/dashboard-nvim'         " Pantalla de inicio personalizada
 
@@ -269,11 +200,7 @@ Plug 'nvim-telescope/telescope.nvim'  " Búsqueda de archivos y símbolos
 " ------------------------- Integraciones externas -------------------------
 Plug 'github/copilot.vim'             " GitHub Copilot
 
-" ------------------------- Plugins comentados / antiguos -------------------------
-" Plug 'dhruvasagar/vim-dotoo'         " Gestión de tareas estilo Org
-" Plug 'hrsh7th/nvim-compe'            " DEPRECATED
-" Plug '~/.config/nvim/mrtee'          " Plugin local personalizado
-
+ 
 call plug#end()
 " }}}
 
@@ -282,10 +209,7 @@ call plug#end()
 
 
 " Update all plugins
-"
-"
-"
-"
+ 
 autocmd VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
 	\| :PlugInstall --sync
 \| endif
@@ -362,48 +286,7 @@ if has_key(plugs, 'vim-gitgutter')
 endif
 " }}}
 
-" ============================= VIMTEX ============================= 
-" Plugin: lervag/vimtex {{{
-let g:tex_flavor = 'latex'
-" }}}
-
-" ============================= TAGBAR ============================= 
-" Plugin: majutsushi/tagbar {{{
-nmap <F8> :TagbarToggle<CR>
-
-" Add support for reStructuredText files in tagbar.
-let g:tagbar_type_rst = {
-	\ 'ctagstype': 'rst',
-	\ 'ctagsbin' : '/home/martin/.local/bin/rst2ctags',
-	\ 'ctagsargs' : '-f - --sort=yes --sro=»',
-	\ 'kinds' : [
-		\ 's:sections',
-		\ 'i:images'
-	\ ],
-	\ 'sro' : '»',
-	\ 'kind2scope' : {
-		\ 's' : 'section',
-	\ },
-	\ 'sort': 0,
-\ }
-" }}}
-
-" ============================= mbbill/undotree ============================= 
-" Plugin: mbbill/undotree {{{
-nmap <F5> :UndotreeToggle<CR>
-" }}}
-
-" ============================= tpope/vim-speeddating ============================= 
-" Plugin: tpope/vim-speeddating {{{
-" Remap these because C-A is a tmux escape sequence
-let g:speeddating_no_mappings = 1
-nmap <C-u> <Plug>SpeedDatingUp
-nmap <C-d> <Plug>SpeedDatingDown
-xmap <C-u> <Plug>SpeedDatingUp
-xmap <C-d> <Plug>SpeedDatingDown
-nmap <leader>sdu <Plug>SpeedDatingNowUTC
-nmap <leader>sdi <Plug>SpeedDatingNowLocal
-" }}}
+ 
 
 
 " ============================= dense-analysis/ale ============================= 
@@ -476,67 +359,8 @@ if has_key(plugs, 'ale')
 endif
 " }}}
 
-" ============================= dhruvasagar/vim-dotoo ============================= 
-" Plugin: dhruvasagar/vim-dotoo {{{
-if has_key(plugs, 'vim-dotoo')
-	let g:dotoo#agenda#files = ['~/vimwiki/*.dotoo']
-	au BufRead,BufNewFile *.dotoo set filetype=dotoo
-endif
-" }}}
-" ============================= habamax/vim-asciidoctor ============================= 
-" sudo apt install ruby ruby-dev
-" gem install asciidoctor-pdf
-" gem install asciidoctor-diagram
 
-" Plugin: habamax/vim-asciidoctor {{{
 
-if has_key(plugs, 'vim-asciidoctor')
-
-    " Configuración de ejecutables
-    let g:asciidoctor_executable = 'asciidoctor'
-    let g:asciidoctor_extensions = ['asciidoctor-diagram', 'asciidoctor-rouge']
-    let g:asciidoctor_css_path = '~/docs/AsciiDocThemes'
-    let g:asciidoctor_css = 'haba-asciidoctor.css'
-
-    let g:asciidoctor_pdf_executable = 'asciidoctor-pdf'
-    let g:asciidoctor_pdf_extensions = ['asciidoctor-diagram']
-    let g:asciidoctor_pdf_themes_path = '~/docs/AsciiDocThemes'
-    let g:asciidoctor_pdf_fonts_path = '~/docs/AsciiDocThemes/fonts'
-
-    let g:asciidoctor_pandoc_executable = 'pandoc'
-    let g:asciidoctor_pandoc_data_dir = '~/docs/.pandoc'
-    let g:asciidoctor_pandoc_other_params = '--toc'
-    let g:asciidoctor_pandoc_reference_doc = 'custom-reference.docx'
-
-    " Plegado de secciones
-    let g:asciidoctor_folding = 1
-    let g:asciidoctor_fold_options = 1
-
-    " Resaltado de sintaxis y ocultamiento de caracteres especiales
-    let g:asciidoctor_syntax_conceal = 1
-    let g:asciidoctor_syntax_indented = 0
-    let g:asciidoctor_fenced_languages = ['python', 'c', 'javascript']
-
-    " Mapas de teclas para conversión y exportación
-    fun! AsciidoctorMappings()
-        nnoremap <buffer> <leader>oo :AsciidoctorOpenRAW<CR>
-        nnoremap <buffer> <leader>op :AsciidoctorOpenPDF<CR>
-        nnoremap <buffer> <leader>oh :AsciidoctorOpenHTML<CR>
-        nnoremap <buffer> <leader>ox :AsciidoctorOpenDOCX<CR>
-        nnoremap <buffer> <leader>ch :Asciidoctor2HTML<CR>
-        nnoremap <buffer> <leader>cp :Asciidoctor2PDF<CR>
-        nnoremap <buffer> <leader>cx :Asciidoctor2DOCX<CR>
-        nnoremap <buffer> <leader>p :AsciidoctorPasteImage<CR>
-        compiler asciidoctor2pdf
-    endfun
-
-    " Aplicar mappings a archivos .adoc y .asciidoc
-    augroup asciidoctor
-        au!
-        au BufEnter *.adoc,*.asciidoc call AsciidoctorMappings()
-    augroup END
-
-endif
  
 
 " ============================= jeetsukumaran/vim-buffergator ============================= 
@@ -548,14 +372,8 @@ nnoremap <leader>bp :BuffergatorMruCyclePrev<CR>
 nnoremap <leader>bd :bdelete<CR>
 
 " }}}
-" ============================= ervag/vimtex ============================= 
-" Plugin: lervag/vimtex: Latex editing {{{
-let g:tex_flavor = 'latex'
-" }}}
-" ============================= majutsushi/tagbar ============================= 
-" Plugin: majutsushi/tagbar {{{
-nmap <F8> :TagbarToggle<CR>
-" }}}
+
+
 " ============================= mbbill/undotree ============================= 
 " Plugin: mbbill/undotree {{{
 nmap <F5> :UndotreeToggle<CR>
@@ -587,36 +405,8 @@ nnoremap <Leader>gdh :Gdiffsplit<CR>
 " }}}
 
  
-" ============================= nvim-treesitter/nvim-treesitter ============================= 
-" Plugin: nvim-treesitter/nvim-treesitter {{{
-if has_key(plugs, 'nvim-treesitter')
-	lua << EOF
-		-- Treesitter configuration
-		require('nvim-treesitter.configs').setup {
-			-- If TS highlights are not enabled at all, or disabled via `disable` prop,
-			-- highlighting will fallback to default Vim syntax highlighting
-			highlight = {
-				enable = false, -- false will disable the whole extension
-				extended_mode = false,
-			use_languagetree = true,
-			disable = {}, -- list of language that will be disabled
-				-- Highlight also non-parentheses delimiters, boolean or table: lang -> boolean
-				-- Required for spellcheck, some LaTex highlights and
-				-- code block highlights that do not have ts grammar
-				additional_vim_regex_highlighting = {'org'},
-			},
-			rainbow = {
-				enable = true,
-				extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
-				max_file_lines = nil, -- Do not enable for files with more than n lines, int
-				colors = {}, -- table of hex strings
-				termcolors = {} -- table of colour name strings
-			},
-			ensure_installed = { 'c'},
-		}
-EOF
-endif
-" }}}
+
+
 " ============================= preservim/nerdtree ============================= 
 " Plugin: preservim/nerdtree {{{
 autocmd FileType nerdtree setlocal nolist
@@ -639,16 +429,6 @@ let g:NERDTreeGitStatusIndicatorMapCustom = {
 " }}}
 
 
-" ============================= puremourning/vimspector ============================= 
-" Plugin: puremourning/vimspector {{{
-nnoremap <Leader>dd :call vimspector#Launch()<CR>
-nnoremap <Leader>dx :call vimspector#Reset()<CR>
-nnoremap <Leader>db :call vimspector#ToggleBreakpoint()<CR>
-nnoremap <Leader>dc :call vimspector#Continue()<CR>
-nnoremap <Leader>ds :call vimspector#StepInto()<CR>
-nnoremap <Leader>dn :call vimspector#StepOver()<CR>
-nnoremap <Leader>df :call vimspector#StepOut()<CR>
-" }}}
 " ============================= voldikss/vim ============================= 
 " Plugin: voldikss/vim {{{
 nnoremap <C-t> :FloatermToggle!<CR>
@@ -659,198 +439,13 @@ augroup FloattermMapping
 augroup end
 tnoremap <Esc> <C-\><C-n>:FloatermToggle<CR>
 " }}}
-" ============================= vim-airline/vim-airline : THEME BAR ============================= 
-" Plugin: vim-airline/vim-airline {{{
-let g:airline_powerline_fonts = 1
-let g:airline_theme = 'base16'
-" Enable wordcount
-let g:airline#extensions#wordcount#enabled = 1
-" Add notes to filetypes
-let g:airline#extensions#wordcount#filetypes = 'notes|help|markdown|rst|org|text|asciidoctor|tex|mail|plaintext|context'
-" }}}
 
-" Settings: spelling {{{
-command! SpellIgnore :call execute('spell! ' . expand('<cword>'))
-nnoremap <Leader>s :call execute('spell! ' . expand('<cword>'))<CR>
-" }}}
- 
-" ============================= neovim/nvim-lspconfig ============================= 
-" Plugin: neovim/nvim-lspconfig: language server configs {{{
-lua << EOF
-local lspconfig = require'lspconfig'
-lspconfig.pyright.setup{}
-lspconfig.vimls.setup {}
-lspconfig.dockerls.setup {}
-lspconfig.tailwindcss.setup{}
-lspconfig.ts_ls.setup {
-  on_attach = function(client, bufnr)
-	client.config.flags = {
-      debounce_text_changes = 150,  -- Adjust this value as needed
-    }
-    client.resolved_capabilities.document_formatting = false
-    client.resolved_capabilities.document_range_formatting = false
-  end,
-  filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
-  cmd = { "typescript-language-server", "--stdio" }
-}
-lspconfig.robotframework_ls.setup({})
-lspconfig.clangd.setup{
-	cmd = { "clangd", "--background-index" },
-	filetypes = { "c", "cpp" },
-}
-lspconfig.intelephense.setup{
-	filetypes={"php","blade"},
-}
--- Global mappings.
--- See `:help vim.diagnostic.*` for documentation on any of the below functions
-vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
-vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist)
 
--- Use LspAttach autocommand to only map the following keys
--- after the language server attaches to the current buffer
-vim.api.nvim_create_autocmd('LspAttach', {
-	group = vim.api.nvim_create_augroup('UserLspConfig', {}),
-	callback = function(ev)
-		-- Enable completion triggered by <c-x><c-o>
-		vim.bo[ev.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
-
-		-- Buffer local mappings.
-		-- See `:help vim.lsp.*` for documentation on any of the below functions
-		local opts = { buffer = ev.buf }
-		vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
-		vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-		vim.keymap.set('n', '<leader>K', vim.lsp.buf.hover, opts)
-		vim.keymap.set('i', '<leader>K', vim.lsp.buf.hover, opts)
-		vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
-		vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
-		vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, opts)
-		vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, opts)
-		vim.keymap.set('n', '<space>wl', function()
-			print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-		end, opts)
-		vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, opts)
-		vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, opts)
-		vim.keymap.set({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
-		vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
-		vim.keymap.set('n', '<space>f', function()
-			vim.lsp.buf.format { async = true }
-		end, opts)
-	end,
-})
-
--- Diagnostics for LSP
-vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-	vim.lsp.diagnostic.on_publish_diagnostics, {
-		virtual_text = false,
-		signs = false,
-		underline = false,
-		update_in_insert = false,
-	}
-)
-EOF
-" }}}
-
-" ============================= NVIM-CMP ============================= 
-" nvim-cmp → Sistema de autocompletado configurable.
-lua <<EOF
-  -- Set up nvim-cmp.
-  local cmp = require'cmp'
-
-  cmp.setup({
-    snippet = {
-      -- REQUIRED - you must specify a snippet engine
-      expand = function(args)
-        vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-        -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-        -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
-        -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
-        -- vim.snippet.expand(args.body) -- For native neovim snippets (Neovim v0.10+)
-
-        -- For `mini.snippets` users:
-        -- local insert = MiniSnippets.config.expand.insert or MiniSnippets.default_insert
-        -- insert({ body = args.body }) -- Insert at cursor
-        -- cmp.resubscribe({ "TextChangedI", "TextChangedP" })
-        -- require("cmp.config").set_onetime({ sources = {} })
-      end,
-    },
-    window = {
-      -- completion = cmp.config.window.bordered(),
-      -- documentation = cmp.config.window.bordered(),
-    },
-    mapping = cmp.mapping.preset.insert({
-      ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-      ['<C-f>'] = cmp.mapping.scroll_docs(4),
-      ['<C-Space>'] = cmp.mapping.complete(),
-      ['<C-e>'] = cmp.mapping.abort(),
-      ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-    }),
-    sources = cmp.config.sources({
-      { name = 'nvim_lsp' },
-      { name = 'vsnip' }, -- For vsnip users.
-      -- { name = 'luasnip' }, -- For luasnip users.
-      -- { name = 'ultisnips' }, -- For ultisnips users.
-      -- { name = 'snippy' }, -- For snippy users.
-    }, {
-      { name = 'buffer' },
-    })
-  })
-
-  -- To use git you need to install the plugin petertriho/cmp-git and uncomment lines below
-  -- Set configuration for specific filetype.
-  --[[ cmp.setup.filetype('gitcommit', {
-    sources = cmp.config.sources({
-      { name = 'git' },
-    }, {
-      { name = 'buffer' },
-    })
- })
- require("cmp_git").setup() ]]-- 
-
-  -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
-  cmp.setup.cmdline({ '/', '?' }, {
-    mapping = cmp.mapping.preset.cmdline(),
-    sources = {
-      { name = 'buffer' }
-    }
-  })
-
-  -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
-  cmp.setup.cmdline(':', {
-    mapping = cmp.mapping.preset.cmdline(),
-    sources = cmp.config.sources({
-      { name = 'path' }
-    }, {
-      { name = 'cmdline' }
-    }),
-    matching = { disallow_symbol_nonprefix_matching = false }
-  })
-
-  -- Set up lspconfig.
-  local capabilities = require('cmp_nvim_lsp').default_capabilities()
-  -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
-  require('lspconfig')['pyright'].setup {
-    capabilities = capabilities
-  }
-EOF
 
 
 " ============================= neoclide/coc.nvim: autocompletion =============================
 " es un complemento de autocompletado y asistencia para código en Neovim basado en el protocolo LSP (Language Server Protocol).
 " :CocInstall coc-snippets   Permite instalar snippets 
-" :CocConfig 	Agrega lo siguiente: friendly-snippets → Paquete de snippets listos para usar.
-
-" {
-"   "snippets.extends": {
-"     "javascript": ["javascriptreact"],
-"     "typescript": ["typescriptreact"],
-"     "python": ["python"],
-"     "lua": ["lua"],
-"     "cpp": ["cpp"],
-"     "c": ["c"]
-"   }
-" }
 
   
  " Plugin: neoclide/coc.nvim: autocompletion {{{
@@ -932,12 +527,12 @@ if has_key(plugs, 'coc.nvim')
 
 	" Remap <C-f> and <C-b> to scroll float windows/popups
 	if has('nvim-0.4.0') || has('patch-8.2.0750')
-	  nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-	  nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-	  inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
-	  inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
-	  vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-	  vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+	 nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+	 nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+	 inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+	 inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+	 vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+	 vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 	endif
 
 	" Use CTRL-S for selections ranges
@@ -981,6 +576,21 @@ EOF
 nnoremap <leader>w :WhichKey<CR>
 nnoremap <leader>p :Dashboard<CR>
 
+" ============================= vim-airline/vim-airline : THEME BAR ============================= 
+" Plugin: vim-airline/vim-airline {{{
+let g:airline_powerline_fonts = 1
+let g:airline_theme = 'base16'
+" Enable wordcount
+let g:airline#extensions#wordcount#enabled = 1
+" Add notes to filetypes
+let g:airline#extensions#wordcount#filetypes = 'notes|help|markdown|rst|org|text|asciidoctor|tex|mail|plaintext|context'
+" }}}
+
+" Settings: spelling {{{
+command! SpellIgnore :call execute('spell! ' . expand('<cword>'))
+nnoremap <Leader>s :call execute('spell! ' . expand('<cword>'))<CR>
+" }}}
+  
 
 
 lua << EOF
@@ -988,17 +598,37 @@ require('dashboard').setup {
   theme = 'hyper',
   config = {
     header = {
-    '   ⣴⣶⣤⡤⠦⣤⣀⣤⠆     ⣈⣭⣭⣿⣶⣿⣦⣼⣆         ',
-    '    ⠉⠻⢿⣿⠿⣿⣿⣶⣦⠤⠄⡠⢾⣿⣿⡿⠋⠉⠉⠻⣿⣿⡛⣦       ',
-    '          ⠈⢿⣿⣟⠦ ⣾⣿⣿⣷⠄⠄⠄⠄⠻⠿⢿⣿⣧⣄     ',
-    '           ⣸⣿⣿⢧ ⢻⠻⣿⣿⣷⣄⣀⠄⠢⣀⡀⠈⠙⠿⠄    ',
-    '          ⢠⣿⣿⣿⠈  ⠡⠌⣻⣿⣿⣿⣿⣿⣿⣿⣛⣳⣤⣀⣀   ',
-    '   ⢠⣧⣶⣥⡤⢄ ⣸⣿⣿⠘⠄ ⢀⣴⣿⣿⡿⠛⣿⣿⣧⠈⢿⠿⠟⠛⠻⠿⠄  ',
-    '  ⣰⣿⣿⠛⠻⣿⣿⡦⢹⣿⣷   ⢊⣿⣿⡏  ⢸⣿⣿⡇ ⢀⣠⣄⣾⠄   ',
-    ' ⣠⣿⠿⠛⠄⢀⣿⣿⣷⠘⢿⣿⣦⡀ ⢸⢿⣿⣿⣄ ⣸⣿⣿⡇⣪⣿⡿⠿⣿⣷⡄  ',
-    ' ⠙⠃   ⣼⣿⡟  ⠈⠻⣿⣿⣦⣌⡇⠻⣿⣿⣷⣿⣿⣿ ⣿⣿⡇⠄⠛⠻⢷⣄ ',
-    '      ⢻⣿⣿⣄   ⠈⠻⣿⣿⣿⣷⣿⣿⣿⣿⣿⡟ ⠫⢿⣿⡆     ',
-    '       ⠻⣿⣿⣿⣿⣶⣶⣾⣿⣿⣿⣿⣿⣿⣿⣿⡟⢀⣀⣤⣾⡿⠃     ',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⠟⠻⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⠀⠀⠈⠻⣦⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣴⣶⣦⡀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡿⡇⠀⠀⠀⠀⠈⠙⢷⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⠾⠋⠁⢸⣿⡇⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣇⡇⠀⠀⠀⠀⠀⠀⠀⠙⢷⣆⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⡾⠛⠁⠀⠀⠀⣿⣼⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⡏⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢿⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⡾⠛⠁⠀⠀⠀⠀⠀⣸⡿⣿⠂⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣇⣿⠀⠀⠀⠀⠀⠶⠶⠶⠶⠶⠶⠿⠷⠶⠶⠤⣤⣤⣀⣀⡀⢀⣤⡾⠛⠁⠀⠀⠀⠀⠀⠀⠀⢠⣿⢣⡟⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⣽⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼⡷⣸⠇⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣿⢣⡿⠁⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣼⠃⠀⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⠇⠀⣀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⡏⠀⠀⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⣿⣿⡾⠛⠉⣉⣽⣿⣶⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣴⠶⠛⢛⣿⣿⣷⣶⣤⣀⠀⠀⠀⠀⠀⠀⢸⣿⡀⠀⠀⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⢰⣾⠛⢉⣵⡟⣃⣤⣶⣿⣿⣿⣿⣿⣿⣷⡄⠀⠀⠀⠀⠀⣠⣾⠏⣡⣴⣾⣿⣿⣿⣿⣿⣿⣿⣷⡄⠀⠀⠀⠀⢈⡹⣇⠀⠀⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠙⣷⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣀⣀⣀⣀⣰⣿⣷⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⠶⠖⠲⠾⣿⣿⣦⠀⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⣠⣴⡾⠋⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠛⠻⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠀⠀⠀⠀⠀⠈⠙⢿⣄⠀⠀⠀⠀',
+    '⠀⠀⣿⡛⠉⠁⠀⠀⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡏⠀⠀⠀⠀⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢷⣄⠀⠀',
+    '⠀⠀⣾⣷⣦⣀⠀⠀⠈⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠏⠀⠀⠀⠀⠀⠘⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠻⣧⠀',
+    '⠀⡀⠈⠻⢿⣿⣿⣷⠆⠀⠙⠻⠿⣿⣿⡿⢿⣿⠋⠀⠀⠀⣴⠇⠀⠀⠀⠈⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢿⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⡆',
+    '⠀⠻⣟⠛⠛⠛⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠿⣿⣆⣀⣠⣼⢿⣧⠀⠀⠀⢀⣿⠿⢿⣿⣿⣿⣿⣿⣿⣿⠿⣛⠹⣮⣿⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣷',
+    '⠀⠀⠈⠻⢦⣤⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⢩⠿⠻⣯⢻⣷⣶⣿⡿⠋⠀⠀⠀⠉⠉⠉⠉⠁⠀⣐⣭⣾⡿⠋⢻⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿',
+    '⠀⠀⠀⢀⣰⣿⣻⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣴⡿⠛⣍⠡⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⡟',
+    '⠀⠀⠀⠛⣿⣿⠟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣤⡾⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⡿⠁',
+    '⠀⠀⠀⢐⣿⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⠟⠀⠀',
+    '⠀⠀⠀⣼⣿⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⡾⠃⠀⠀⠀',
+    '⠀⠀⠀⣸⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣶⡟⠀⠀⠀⠀⠀',
+    '⠀⠀⣰⣿⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣾⠛⠀⠀⠀⠀⠀⠀',
+    '⢠⣾⢿⡿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⡏⠀⠀⠀⠀⠀⠀⠀',
+    '⠀⣰⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣶⣿⠀⠀⠀⠀⠀⠀⠀⠀',
+    '⣾⢿⣾⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠛⠀⠀⠀⠀⠀⠀⠀⠀',
+    '⢀⣾⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⠀⠀⠀⠀⠀⠀⠀⠀⠀',
+
     },
     shortcut = {
       { desc = "🔎Find File", group = "@property", action = "Telescope find_files", key = "f" },
@@ -1034,4 +664,7 @@ telescope.setup {
 EOF
 
 
+lua << EOF
+require'colorizer'.setup()
+EOF
 
