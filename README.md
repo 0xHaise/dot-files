@@ -120,6 +120,14 @@ Actualizar variable plugins en ~/.zshrc
 plugins=(git zsh-autosuggestions)
 ```
 
+### Instalar https://github.com/lsd-rs/lsd 
+Un "ls" con mejoras visuales: iconos, colores, etc
+```bash
+sudo apt update -y
+sudo apt install lsd
+sudo apt --fix-broken install
+```
+
 # FastFetch
 
 Compilarlo:
