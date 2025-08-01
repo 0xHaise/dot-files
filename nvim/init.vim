@@ -4,10 +4,6 @@
 " TECLA LEADER : "\"
 let mapleader = "\\"
 
-" Mapeo en modo normal para buscar por palabras con Telescope
-nnoremap <leader>w :Telescope live_grep<CR>
-
-
 nnoremap <silent> <leader>h :call CocActionAsync('doHover')<CR>
 " Atajo para ejecutar Prettier
 nmap <leader>p :Prettier<CR>
@@ -166,14 +162,32 @@ Plug 'dense-analysis/ale'             " Linter y fixer
 Plug 'tpope/vim-commentary'           " Comentarios rápidos con gc
 Plug 'tpope/vim-dispatch'             " Ejecución asíncrona
 Plug 'honza/vim-snippets'
-" Plugin oficial de Prettier: npm install -g prettier
+" Plugin oficial de Prettier:  npm install -g prettier
 Plug 'prettier/vim-prettier', {
       \ 'do': 'npm install --frozen-lockfile --production',
       \ 'for': ['javascript', 'typescript', 'css', 'json', 'markdown'] }
+
 Plug 'norcalli/nvim-colorizer.lua'
 Plug 'prisma/vim-prisma'
+
+
+
+
+
+
+" Dependencias requeridas
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
+Plug 'MunifTanjim/nui.nvim'
+Plug 'nvim-treesitter/nvim-treesitter'
+
+" Plugin principal de LeetCode
+Plug 'kawre/leetcode.nvim'
+
+
 " ------------------------- Snippets y Autocompletado -------------------------
 Plug 'hrsh7th/nvim-cmp'               " Motor de completado moderno
+
 
 
 
@@ -598,6 +612,7 @@ require('dashboard').setup {
   theme = 'hyper',
   config = {
     header = {
+
     '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
     '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⠟⠻⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
     '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⠀⠀⠈⠻⣦⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣴⣶⣦⡀⠀⠀⠀',
@@ -628,6 +643,7 @@ require('dashboard').setup {
     '⠀⣰⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣶⣿⠀⠀⠀⠀⠀⠀⠀⠀',
     '⣾⢿⣾⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠛⠀⠀⠀⠀⠀⠀⠀⠀',
     '⢀⣾⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⠀⠀⠀⠀⠀⠀⠀⠀⠀',
+
 
     },
     shortcut = {
@@ -662,9 +678,22 @@ telescope.setup {
   },
 }
 EOF
-
+" Mapeo en modo normal para buscar por palabras con Telescope
+nnoremap <leader>a :Telescope live_grep<CR>
 
 lua << EOF
 require'colorizer'.setup()
+EOF
+
+
+lua << EOF
+require('leetcode').setup({
+  lang = "javascript",               -- O el lenguaje que prefieras
+  cn = { enabled = false },          -- Usa `true` si quieres leetcode.cn
+  storage = {
+    home = vim.fn.stdpath('data') .. '/leetcode',
+    cache = vim.fn.stdpath('cache') .. '/leetcode',
+  },
+})
 EOF
 
