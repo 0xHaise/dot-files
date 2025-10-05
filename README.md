@@ -1,13 +1,3 @@
-# Config files that I use 
-
-- kitty
-- nvim
-- .tmux.conf
-- ArrowKeyRemap.ahk : requires AHK software
-- utilidades : fzf
-
-
-
 ## compilar nvim desde código:
 
 Asegúrate de haber instalado todo:
@@ -25,15 +15,15 @@ git checkout stable
 make CMAKE_BUILD_TYPE=Release
 sudo make install
 ```
-### Clona el repositorio de Nerd Fonts
+
+Instalar fuentes necesarias para los iconos:
+
 ```
 git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git
 cd nerd-fonts
-```
-### Instala fuentes para iconos de nvim, por ejemplo Hack
-```
 ./install.sh Hack
 ```
+
 dentro de kitty.conf:
 ```
 font_family Hack Nerd Font
@@ -128,14 +118,6 @@ sudo apt install lsd
 sudo apt --fix-broken install
 ```
 
-Agregar a zshrc
-```
-alias ls='lsd'
-alias l='ls -l'
-alias la='ls -a'
-alias lla='ls -la'
-alias lt='ls --tree'
-```
 
 # FastFetch
 
@@ -151,25 +133,3 @@ cmake ..
 make -j$(nproc)
 sudo make install
 ```
-
-Imagenes para fastfetch
-
-```bash
-cd dot-files
-cp -r fastfetch-images ~/Pictures
-```
-
-Agregar alias con imagen customizada al .zshrc
-
-```bash
-alias fastfetch="fastfetch --kitty-direct ~/Downloads/0xinterrupthandler.png
---logo-width 35  --logo-height 15"
-```
-
-
-# Result
-
-![Alt text](result.png)
-
-
-
