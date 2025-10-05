@@ -771,7 +771,6 @@ require("ibl").setup {
   scope = { enabled = true, show_start = false, show_end = false }
 }
 
-" ============================= Scrollbar ============================= 
  
 require("scrollbar").setup({
   handle = {
@@ -790,11 +789,9 @@ require("scrollbar").setup({
 require('neoscroll').setup({
   mappings = {'<C-u>', '<C-d>', '<C-b>', '<C-f>'}
 })
-" ============================= TODO Comments============================= 
 
 -- TODO Comments
 require("todo-comments").setup()
-" ============================= Notify (notificaciones bonitas) ============================= 
  
 vim.notify = require("notify")
 require("notify").setup({
@@ -803,14 +800,12 @@ require("notify").setup({
   render = "compact",
   timeout = 3000,
 })
-" ============================= Autopairs ============================= 
  
 require('nvim-autopairs').setup({
   check_ts = true,
   fast_wrap = {},
 })
 
-" ============================= Illuminate (resaltar palabra bajo cursor) ============================= 
  
 require('illuminate').configure({
   delay = 200,
