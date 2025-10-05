@@ -143,6 +143,7 @@ Plug 'ryanoasis/vim-devicons'                   " Iconos para desarrolladores
 Plug 'vim-airline/vim-airline'                  " Barra de estado elegante
 Plug 'vim-airline/vim-airline-themes'           " Temas para airline
 Plug 'akinsho/bufferline.nvim', { 'tag': 'v4.9.0' } " Barra de pestañas moderna
+Plug 'bluz71/vim-moonfly-colors', { 'as': 'moonfly' }  " ⭐ Moonfly theme
 
 " ----------------------- Archivos y Exploración -----------------------
 Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' } " Explorador de archivos
@@ -214,6 +215,43 @@ Plug 'nvim-telescope/telescope.nvim'  " Búsqueda de archivos y símbolos
 " ------------------------- Integraciones externas -------------------------
 Plug 'github/copilot.vim'             " GitHub Copilot
 
+" ============================= Mejoras Visuales ============================= 
+
+" 1. Indent Blankline - Líneas de indentación visuales
+Plug 'lukas-reineke/indent-blankline.nvim'
+
+" 2. Scrollbar virtual con diagnósticos
+Plug 'petertriho/nvim-scrollbar'
+
+" 3. Animaciones suaves al hacer scroll
+Plug 'karb94/neoscroll.nvim'
+
+" 4. Resaltar colores en TODO, FIXME, NOTE, etc.
+Plug 'folke/todo-comments.nvim'
+
+" 5. Notificaciones elegantes
+Plug 'rcarriga/nvim-notify'
+
+" 6. Mejor UI para cmdline, messages y popupmenu
+Plug 'folke/noice.nvim'
+
+
+" 8. Iluminación del símbolo bajo el cursor
+Plug 'RRethy/vim-illuminate'
+
+" ============================= Mejoras de Productividad ============================= 
+
+" 1. Autopairs - Cierre automático de paréntesis, comillas, etc.
+Plug 'windwp/nvim-autopairs'
+
+" 2. Surround - Manipular pares de caracteres (ysiw", cs"', ds")
+Plug 'tpope/vim-surround'
+
+
+
+
+
+
  
 call plug#end()
 " }}}
@@ -230,10 +268,34 @@ autocmd VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
 
 " ============================= catppuccin/nvim (THEME) ============================= 
 " https://github.com/catppuccin/nvim
-" Plugin: catppuccin/nvim {{{
-colorscheme catppuccin-latte
-set background=dark " Optional: change to 'light' for the light version
+" " Plugin: catppuccin/nvim {{{
+" colorscheme catppuccin-latte
+" set background=dark " Optional: change to 'light' for the light version
+" " }}}
+" " ============================= bluz71/vim-moonfly-colors (THEME) ============================= 
+" https://github.com/bluz71/vim-moonfly-colors
+" Plugin: moonfly {{{
+
+" ⭐ Agregar esta línea para habilitar colores true color
+set termguicolors
+
+" Configuración de moonfly (antes de cargar el colorscheme)
+let g:moonflyItalics = v:true          " Habilitar itálicas
+let g:moonflyUnderlineMatchParen = v:true  " Subrayar paréntesis coincidentes
+let g:moonflyNormalFloat = v:true      " Fondo normal para ventanas flotantes
+
+" Cargar el colorscheme
+colorscheme moonfly
+
+" Configurar airline para que use el tema moonfly
+let g:airline_theme = 'moonfly'
+
 " }}}
+
+" Cambiar entre temas rápidamente
+nnoremap <leader>c1 :colorscheme moonfly<CR>:AirlineTheme moonfly<CR>
+nnoremap <leader>c2 :colorscheme catppuccin-macchiato<CR>:AirlineTheme base16<CR>
+nnoremap <leader>c3 :colorscheme gruvbox<CR>:AirlineTheme gruvbox<CR>
 
 
 " ============================= lewis6991/gitsigns.nvim ============================= 
@@ -606,6 +668,7 @@ nnoremap <Leader>s :call execute('spell! ' . expand('<cword>'))<CR>
 " }}}
   
 
+" ============================= DASHBOARD ============================= 
 
 lua << EOF
 require('dashboard').setup {
@@ -656,6 +719,8 @@ require('dashboard').setup {
   }
 }
 EOF
+ 
+" ============================= TELESCOPE ============================= 
 
 lua << EOF
 local telescope = require('telescope')
@@ -685,6 +750,7 @@ lua << EOF
 require'colorizer'.setup()
 EOF
 
+" ============================= LEETCODE ============================= 
 
 lua << EOF
 require('leetcode').setup({
@@ -696,4 +762,58 @@ require('leetcode').setup({
   },
 })
 EOF
+
+ 
+lua << EOF
+-- Indent Blankline
+require("ibl").setup {
+  indent = { char = "│" },
+  scope = { enabled = true, show_start = false, show_end = false }
+}
+
+" ============================= Scrollbar ============================= 
+ 
+require("scrollbar").setup({
+  handle = {
+    color = "#3e4451",
+  },
+  marks = {
+    Search = { color = "#ff9e64" },
+    Error = { color = "#db4b4b" },
+    Warn = { color = "#e0af68" },
+    Info = { color = "#0db9d7" },
+    Hint = { color = "#1abc9c" },
+  }
+})
+
+-- Scroll suave
+require('neoscroll').setup({
+  mappings = {'<C-u>', '<C-d>', '<C-b>', '<C-f>'}
+})
+" ============================= TODO Comments============================= 
+
+-- TODO Comments
+require("todo-comments").setup()
+" ============================= Notify (notificaciones bonitas) ============================= 
+ 
+vim.notify = require("notify")
+require("notify").setup({
+  background_colour = "#000000",
+  fps = 60,
+  render = "compact",
+  timeout = 3000,
+})
+" ============================= Autopairs ============================= 
+ 
+require('nvim-autopairs').setup({
+  check_ts = true,
+  fast_wrap = {},
+})
+
+" ============================= Illuminate (resaltar palabra bajo cursor) ============================= 
+ 
+require('illuminate').configure({
+  delay = 200,
+  under_cursor = true,
+})
 
