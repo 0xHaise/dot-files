@@ -16,10 +16,19 @@
   (load-theme 'doom-palenight t))
 
 ;; Fuentes
-(defvar my/fixed-width-font "JetBrains Mono")
-(defvar my/variable-width-font "Iosevka Aile")
+;;(defvar my/fixed-width-font "JetBrains Mono")
+;;(defvar my/variable-width-font "Iosevka Aile")
 
-(set-face-attribute 'default nil :font my/fixed-width-font :weight 'light :height 180)
-(set-face-attribute 'fixed-pitch nil :font my/fixed-width-font :weight 'light :height 190)
-(set-face-attribute 'variable-pitch nil :font my/variable-width-font :weight 'light :height 1.3)
+;;(set-face-attribute 'default nil :font my/fixed-width-font :weight 'light :height 180)
+;;(set-face-attribute 'fixed-pitch nil :font my/fixed-width-font :weight 'light :height 190)
+;;(set-face-attribute 'variable-pitch nil :font my/variable-width-font :weight 'light :height 1.3)
+
+;; Barra de estado moderna
+(use-package doom-modeline
+  :ensure t
+  :init
+  (doom-modeline-mode 1)
+  :custom
+  (doom-modeline-height 25) ; Ajusta altura de la barra
+  (doom-modeline-icon t))   ; Requiere nerd-fonts
 

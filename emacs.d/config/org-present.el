@@ -31,7 +31,10 @@
                   (org-block-begin-line (:height 0.7) org-block)))
     (setq header-line-format " ")
     (org-display-inline-images)
-    (visual-line-mode 1))
+    (visual-line-mode 1)
+    (define-key org-present-mode-keymap (kbd "C-c C-n") #'org-present-next)
+    (define-key org-present-mode-keymap (kbd "C-c C-p") #'org-present-prev)
+    (define-key org-present-mode-keymap (kbd "C-c C-q") #'org-present-quit))
 
   (defun my/org-present-end ()
     (setq-local face-remapping-alist '((default variable-pitch default)))

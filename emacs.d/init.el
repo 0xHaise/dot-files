@@ -6,11 +6,17 @@
 ;; Load appearance settings
 (load (expand-file-name "config/appearance.el" user-emacs-directory))
 
+;; Load dashboard (debe cargarse antes de org para que aparezca al inicio)
+(load (expand-file-name "config/dashboard.el" user-emacs-directory))
+
 ;; Load Org settings
 (load (expand-file-name "config/org.el" user-emacs-directory))
 
-;; Load Org Present settings
+;; Load Org Present settings   
 (load (expand-file-name "config/org-present.el" user-emacs-directory))
+
+;; Load navigation (treemacs, etc.)
+(load (expand-file-name "config/navigation.el" user-emacs-directory))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -24,3 +30,4 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
