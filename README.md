@@ -1,6 +1,29 @@
 
-wlogout
+~/.config/picom/picom.conf
+```
+backend = "glx";
+vsync = true;
 
+# Opacidad global (ejemplo 95%)
+inactive-opacity = 0.95;
+active-opacity = 1.0;
+
+# Opacidad específica para kitty
+opacity-rule = [
+  "85:class_g = 'kitty'"
+];
+################################
+# Background-Blurring
+################################
+# blur-background = false;
+# blur-method = "dual_kawase";
+# blur-size = 100; # Set your desired blur size
+# blur-strength = 100; # Set your desired blur strength
+
+```
+
+
+sudo pacman -S wlogout
 
 sudo pacman -S gammastep # gammastep -O 3500 -b 0.9
 
