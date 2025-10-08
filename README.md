@@ -1,4 +1,20 @@
 
+sudo npm install -g pyright
+npm install -g prettier
+
+
+
+
+
+
+
+
+
+
+
+---
+
+
 ~/.config/picom/picom.conf
 ```
 backend = "glx";
