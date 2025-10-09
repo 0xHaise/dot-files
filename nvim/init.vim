@@ -124,6 +124,7 @@ Plug 'prettier/vim-prettier', {
       \ 'for': ['javascript', 'typescript', 'css', 'json', 'markdown'] }
 Plug 'norcalli/nvim-colorizer.lua'
 Plug 'prisma/vim-prisma'
+Plug 'ggandor/leap.nvim'
 
 " Búsqueda
 Plug 'nvim-lua/plenary.nvim'
@@ -565,3 +566,15 @@ cmp.setup.cmdline(':', {
   })
 })
 EOF
+
+
+" ============================= Navigation: Leap ============================= {{{
+" s{char}{char} - Saltar hacia adelante
+" S{char}{char} - Saltar hacia atrás
+" gs{char}{char} - Saltar en otras ventanas
+lua << EOF
+require('leap').create_default_mappings()
+EOF
+" }}}
+
+
